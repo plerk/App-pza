@@ -1,9 +1,11 @@
-package App::pza;
-
 use strict;
 use warnings;
+use 5.020;
 
-# ABSTRACT: Command line for Database::Server
-# VERSION
+package App::pza {
+
+  # ABSTRACT: Command line for Database::Server
+
+}
 
 1;
