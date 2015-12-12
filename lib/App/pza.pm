@@ -63,6 +63,12 @@ package App::pza {
     isa     => 'Int',
     default => 0,
   );
+
+  has args => (
+    is      => 'ro',
+    isa     => 'ArrayRef[Str]',
+    default => sub { [] },
+  );
   
   sub start_unless_up ($self)
   {
@@ -101,6 +107,7 @@ package App::pza::start {
     $self;
   }
 
+  __PACKAGE__->meta->make_immutable;
 }
 
 package App::pza::stop {
@@ -114,6 +121,7 @@ package App::pza::stop {
     $self;
   }
 
+  __PACKAGE__->meta->make_immutable;
 }
 
 package App::pza::status {
@@ -135,6 +143,21 @@ package App::pza::status {
     $self;
   }
 
+  __PACKAGE__->meta->make_immutable;
+}
+
+package App::pza::shell {
+
+  use App::pza::oo;
+  extends 'App::pza';
+  
+  sub run ($self)
+  {
+    $self->dbs->interactive_shell($self->args->[0], exec => 1);
+    $self;
+  }
+
+  __PACKAGE__->meta->make_immutable;
 }
 
 package App::pza::main {
