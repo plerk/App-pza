@@ -84,6 +84,7 @@ package App::pza::list {
       $self
         ->start_unless_up
         ->dbs->list_databases;
+    $self;
   }
 
   __PACKAGE__->meta->make_immutable;
@@ -97,6 +98,7 @@ package App::pza::start {
   sub run ($self)
   {
     $self->start_unless_up;
+    $self;
   }
 
 }
@@ -109,6 +111,7 @@ package App::pza::stop {
   sub run ($self)
   {
     $self->dbs->stop if $self->dbs->is_up;
+    $self;
   }
 
 }
@@ -120,7 +123,16 @@ package App::pza::status {
 
   sub run ($self)
   {
-    say $self->dbs->is_up ? 'up' : 'down';
+    if($self->dbs->is_up)
+    {
+      say 'up';
+    }
+    else
+    {
+      say 'down';
+      $self->exit_value(2);
+    }
+    $self;
   }
 
 }
