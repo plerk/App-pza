@@ -1,5 +1,8 @@
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More tests => 4;
 
-use_ok 'App::pza';
+require_ok 'App::pza';
+require_ok 'App::pza::oo';
+require_ok 'App::pza::oo::role';
+require_ok 'App::pza::type';

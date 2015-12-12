@@ -11,7 +11,19 @@ my $post_diag;
 
 $modules{$_} = $_ for qw(
   ExtUtils::MakeMaker
+  File::HomeDir
+  Getopt::Long
+  Import::Into
+  Module::Load
+  Moose::Util::TypeConstraints
+  MooseX::Types::Path::Class
+  Path::Class
+  Pod::Usage
   Test::More
+  YAML::XS
+  constant
+  experimental
+  namespace::autoclean
 );
 
 

@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use App::pza;
+
+# ABSTRACT: Command line interface to Database::Server
+# PODNAME: pza
+
+App::pza->main(@ARGV);
+
+=head1 SYNOPSIS
+
+ % pza db command [options]
+
+=head1 DESCRIPTION
+
+=head2 Databases
+
+The first argument should be the database server software
+you intend to use.  Supported server software:
+
+=head3 PostgreSQL (may be abbreviated: pg)
+
+Requires L<Database::Server::PostgreSQL> to be installed.
+
+=head3 MySQL (may be abbreviated: my)
+
+Requires L<Database::Server::MySQL> to be installed.
+
+=head3 SQLite (may be abbreviated: lt)
+
+Requires L<Database::Server::SQLite> be installed.  Uses
+a faux database instance.
+
+=head1 OPTIONS
+
+=head2 general
+
+Options that work with any subcommand:
+
+=head3 --help
+
+Print this help and exit.
+
+=head3 --version
+
+Print version and exit.
+
+=head2 list
+
+List databases
+
+=cut
