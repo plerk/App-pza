@@ -235,9 +235,10 @@ package App::pza::main {
       exit 2;
     }
     
-    my $self = $class->new(dbs_class => $dbs_class, args => \@args);
-    $self->run;
-    exit $self->exit_value;
+    exit $class
+      ->new(dbs_class => $dbs_class, args => \@args)
+      ->run
+      ->exit_value;
   }
 }
 
