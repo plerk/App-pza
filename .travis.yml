@@ -3,6 +3,7 @@ sudo: false
 
 install:
   - perlbrew list
+  - sh corpus/install_database_server
   - dzil authordeps --missing | cpanm -n
   - dzil listdeps   --missing | cpanm -n
 
