@@ -23,8 +23,7 @@ package App::pza {
     isa     => File,
     lazy    => 1,
     coerce  => 1,
-    default => sub {
-      my($self) = @_;
+    default => sub ($self) {
       my $file = file( File::HomeDir->my_home, '.pizza', 'etc', lc($self->dbs_class =~ s/^.*:://r).'.yml');
       $file->parent->mkpath(0,0700) unless -d $file->parent;
       $file;
@@ -35,8 +34,7 @@ package App::pza {
     is      => 'ro',
     isa     => 'HashRef',
     lazy    => 1,
-    default => sub {
-      my($self) = @_;
+    default => sub ($self) {
       my $file = $self->dbs_config_file;
       -f $file 
         ? YAML::XS::LoadFile("$file")
@@ -52,8 +50,7 @@ package App::pza {
     is      => 'ro',
     does    => 'Database::Server::Role::Server',
     lazy    => 1,
-    default => sub {
-      my($self) = @_;
+    default => sub ($self) {
       $self->dbs_class->new($self->dbs_config);
     },
   );
@@ -64,12 +61,6 @@ package App::pza {
     default => 0,
   );
 
-  has args => (
-    is      => 'ro',
-    isa     => 'ArrayRef[Str]',
-    default => sub { [] },
-  );
-  
   sub start_unless_up ($self)
   {
     $self->dbs->is_up || $self->dbs->start;
