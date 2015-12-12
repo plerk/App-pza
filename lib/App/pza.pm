@@ -140,13 +140,13 @@ package App::pza::main {
     if(!defined $args[0] || $args[0] =~ /^-/)
     {
       GetOptionsFromArray(\@args, 
-        'help|h'       => sub { pod2usage({ -verbose => 2}) },
+        'help|h'       => sub { pod2usage({ -verbose => 1}) },
         'version'      => sub {
           say 'App::pza version ', (App::pza->VERSION // 'dev');
           exit;
         },
       );
-      pod2usage(1);
+      pod2usage({ -exitval => 1 });
     }
     
     my %dbs = (
