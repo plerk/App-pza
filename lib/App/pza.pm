@@ -190,6 +190,7 @@ package App::pza::shell {
   
   sub run ($self)
   {
+    $self->start_unless_up;
     if($self->command)
     {
       my $dbs = $self->dbs;

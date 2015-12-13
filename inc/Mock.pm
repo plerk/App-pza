@@ -75,8 +75,12 @@ package Database::Server::Foo {
     croak "todo";
   }
   
-  sub interactive_shell
+  sub interactive_shell ($self, $dbname, %args)
   {
+    croak "database is not up" unless $up;
+    $dbname //= 'foo';
+    croak "database no such database $dbname" unless $db{$dbname};
+    $args{exec} ? exec 'foodb', $dbname : system 'foodb', $dbname;
   }
   
   sub is_up
@@ -107,6 +111,24 @@ package Database::Server::Foo {
   sub init
   {
     $init = 1;
+  }
+
+  sub env
+  {
+    my $self = shift;
+    my $sub = ref $_[-1] eq 'CODE' ? pop : undef;
+    my $dbname = shift // 'postgres';
+    
+    my %env = (
+      FOO1 => 'roger',
+      FOO2 => 'rabbit',
+    );
+    
+    $sub ? do {
+      local %ENV = %ENV;
+      $ENV{$_} = $env{$_} for keys %env;
+      $sub->();
+    } : \%env;
   }
 
   __PACKAGE__->meta->make_immutable;
