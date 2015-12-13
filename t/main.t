@@ -5,7 +5,8 @@ use File::HomeDir::Test;
 use Test::More tests => 3;
 use Test::Exit;
 use Capture::Tiny qw( capture );
-use t::Mock;
+use lib 'inc';
+use Mock;
 
 require App::pza;
 

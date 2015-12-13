@@ -4,14 +4,12 @@ use 5.020;
 use experimental qw( signatures postderef );
 use Database::Server;
 
-package
-  Mock {
+package Mock {
   
   our %uage;  
 }
 
-package
-  Pod::Usage {
+package Pod::Usage {
 
   use Carp qw( croak );
   use base qw( Exporter );
@@ -32,8 +30,7 @@ package
 
 }
 
-package
-  Database::Server::Foo {
+package Database::Server::Foo {
 
   use Moose;
   use Carp qw( croak );

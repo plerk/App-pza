@@ -3,7 +3,8 @@ use warnings;
 use 5.020;
 use File::HomeDir::Test;
 use Test::More tests => 9;
-use t::Mock;
+use lib 'inc';
+use Mock;
 use App::pza;
 
 my $app = App::pza->new(dbs_class => 'Database::Server::Foo');

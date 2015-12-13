@@ -4,7 +4,8 @@ use 5.020;
 use experimental qw( signatures postderef );
 use File::HomeDir::Test;
 use Test::More tests => 4;
-use t::Mock;
+use lib 'inc';
+use Mock;
 use App::pza;
 
 my %args = ( dbs_class => 'Database::Server::Foo' );
