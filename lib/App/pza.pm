@@ -10,11 +10,13 @@ package App::pza {
   use Path::Class qw( file );
   use MooseX::Types::Path::Class qw( File Dir );
   use YAML::XS ();
+  use Getopt::Long    qw( GetOptionsFromArray );
+  use Pod::Usage      qw( pod2usage           );
   use App::pza::oo;
 
   has dbs_class => (
     is       => 'ro',
-    isa      => 'Str',
+    isa      => Str,
     required => 1,
   );
   
@@ -32,7 +34,7 @@ package App::pza {
   
   has dbs_config => (
     is      => 'ro',
-    isa     => 'HashRef',
+    isa     => 'HashRef[Str]',
     lazy    => 1,
     default => sub ($self) {
       my $file = $self->dbs_config_file;
@@ -57,14 +59,49 @@ package App::pza {
   
   has exit_value => (
     is      => 'rw',
-    isa     => 'Int',
+    isa     => Int,
     default => 0,
+  );
+  
+  has args => (
+    is      => 'ro',
+    isa     => 'ArrayRef[Str]',
+    default => sub { [] },
   );
 
   sub start_unless_up ($self)
   {
     $self->dbs->is_up || $self->dbs->start;
     $self;
+  }
+  
+  sub BUILDARGS ($class, %args)
+  {
+    my @options = (
+      'help|h'       => sub { pod2usage({ -verbose => 1}) },
+      'version'      => sub {
+          say 'App::pza version ', (App::pza->VERSION // 'dev');
+          exit;
+        },
+    );
+  
+    foreach my $attr ($class->meta->get_all_attributes)
+    {
+      my $constraint = $attr->type_constraint;
+      next unless $constraint;
+      if($constraint->name eq 'App::pza::OptStr')
+      {
+        push @options, $attr->name . '=s' => \$args{$attr->name},
+      }
+      elsif($constraint->name eq 'App::pza::OptFlag')
+      {
+        push @options, $attr->name  => \$args{$attr->name},
+      }
+    }
+    $args{args} //= [];
+    $args{args} = [@{ $args{args} }];
+    GetOptionsFromArray($args{args}, @options) || pod2usage({ -exitval => 1 });
+    \%args,
   }
 
   __PACKAGE__->meta->make_immutable;
@@ -139,12 +176,29 @@ package App::pza::status {
 
 package App::pza::shell {
 
+  use Carp qw( croak );
   use App::pza::oo;
   extends 'App::pza';
   
+  has command => (
+    is  => 'ro',
+    isa => OptStr,
+  );
+  
   sub run ($self)
   {
-    $self->dbs->interactive_shell($self->args->[0], exec => 1);
+    if($self->command)
+    {
+      my $dbs = $self->dbs;
+      croak "unable to set environment for ", ref $dbs unless $dbs->can('env');
+      $dbs->env(sub {
+        exec $self->command;
+      });
+    }
+    else
+    {
+      $self->dbs->interactive_shell($self->args->[0], exec => 1);
+    }
     $self;
   }
 
