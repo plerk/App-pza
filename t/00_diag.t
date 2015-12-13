@@ -10,19 +10,20 @@ my %modules;
 my $post_diag;
 
 $modules{$_} = $_ for qw(
+  Capture::Tiny
+  Database::Server
   ExtUtils::MakeMaker
   File::HomeDir
-  Getopt::Long
   Import::Into
+  List::MoreUtils
   Module::Load
-  Moose::Util::TypeConstraints
+  Moose
   MooseX::Types::Path::Class
   Path::Class
-  Pod::Usage
+  Test::Exit
   Test::More
+  Test::Script
   YAML::XS
-  constant
-  experimental
   namespace::autoclean
 );
 
