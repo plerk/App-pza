@@ -3,6 +3,18 @@ use warnings;
 use 5.020;
 use experimental qw( signatures postderef );
 
+package App::pza::attr {
+
+  use Moose::Role;
+  use namespace::autoclean;
+  
+  has short => (
+    is      => 'rw',
+    isa     => 'Str',
+    default => '',
+  );
+}
+
 package App::pza::oo {
 
   # ABSTRACT: OO settings for Pizza

@@ -89,13 +89,15 @@ package App::pza {
     {
       my $constraint = $attr->type_constraint;
       next unless $constraint;
+      my $name = $attr->name;
+      $name .= '|' . $attr->short if $attr->does('App::pza::attr') && $attr->short;
       if($constraint->name eq 'App::pza::OptStr')
       {
-        push @options, $attr->name . '=s' => \$args{$attr->name},
+        push @options, $name . '=s' => \$args{$attr->name},
       }
       elsif($constraint->name eq 'App::pza::OptFlag')
       {
-        push @options, $attr->name  => \$args{$attr->name},
+        push @options, $name  => \$args{$attr->name},
       }
     }
     $args{args} //= [];
@@ -181,8 +183,10 @@ package App::pza::shell {
   extends 'App::pza';
   
   has command => (
-    is  => 'ro',
-    isa => OptStr,
+    traits => [qw( App::pza::attr )],
+    is     => 'ro',
+    isa    => OptStr,
+    short  => 'c',
   );
   
   sub run ($self)
