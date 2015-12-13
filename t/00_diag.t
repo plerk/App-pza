@@ -20,6 +20,7 @@ $modules{$_} = $_ for qw(
   Moose
   MooseX::Types::Path::Class
   Path::Class
+  Test::Exec
   Test::Exit
   Test::More
   Test::Script
