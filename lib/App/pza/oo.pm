@@ -3,18 +3,6 @@ use warnings;
 use 5.020;
 use experimental qw( signatures postderef );
 
-package App::pza::attr {
-
-  use Moose::Role;
-  use namespace::autoclean;
-  
-  has short => (
-    is      => 'rw',
-    isa     => 'Str',
-    default => '',
-  );
-}
-
 package App::pza::oo {
 
   # ABSTRACT: OO settings for Pizza
@@ -55,8 +43,44 @@ package App::pza::oo {
     }
     ${^WARNING_BITS} = $old;
     
+    # hook into 'has' so that attributes that use any
+    # of our special attribute traits automatically
+    # get the trait.
+    my $has   = \&{"${caller}::has"};
+    my $myhas = sub ($name, @rest) {
+      my %rest = @rest;
+      if($rest{short})
+      {
+        my @traits;
+        @traits = (delete $rest{traits})->@* if $rest{traits};
+        push @traits, 'App::pza::attr';
+        $has->($name, traits => \@traits, @rest);
+      }
+      else
+      {
+        $has->($name, @rest);
+      }
+    };
+    do {
+      no strict 'refs';
+      no warnings 'redefine';
+      *{"${caller}::has"} = $myhas;
+    };
+   
     return;
   }
+}
+
+package App::pza::attr {
+
+  use Moose::Role;
+  use namespace::autoclean;
+  
+  has short => (
+    is      => 'rw',
+    isa     => 'Str',
+    default => '',
+  );
 }
 
 1;

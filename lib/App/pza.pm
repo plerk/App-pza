@@ -183,7 +183,6 @@ package App::pza::shell {
   extends 'App::pza';
   
   has command => (
-    traits => [qw( App::pza::attr )],
     is     => 'ro',
     isa    => OptStr,
     short  => 'c',
