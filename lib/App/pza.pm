@@ -57,6 +57,12 @@ package App::pza {
     },
   );
   
+  sub get_dbs ($, $class)
+  {
+    $class = "Database::Server::$class" unless $class =~ /::/;
+    __PACKAGE__->new(dbs_class => $class)->dbs;
+  }
+  
   has exit_value => (
     is      => 'rw',
     isa     => Int,
@@ -207,6 +213,67 @@ package App::pza::shell {
   }
 
   __PACKAGE__->meta->make_immutable;
+}
+
+package App::pza::dump {
+
+  use File::Temp qw( tempfile );
+  use App::pza::oo;
+  extends 'App::pza';
+  
+  has data => (
+    is    => 'ro',
+    isa   => OptFlag,
+    short => 'd',
+  );
+  
+  has schema => (
+    is    => 'ro',
+    isa   => OptFlag,
+    short => 's',
+  );
+  
+  has access => (
+    is    => 'ro',
+    isa   => OptFlag,
+    short => 'a',
+  );
+  
+  has dbname => (
+    is      => 'ro',
+    isa     => 'Maybe[Str]',
+    lazy    => 1,
+    default => sub {
+      shift->args->[0],
+    },
+  );
+  
+  sub run ($self)
+  {
+    $self->start_unless_up;
+    
+    if($self->can('dump'))
+    {
+      my($fh, $filename) = tempfile('pzadumpXXXX', SUFFIX => '.sql', UNLINK => 1, TMPDIR => 1);
+      close $fh;
+      $self->dbs->dump($self->dbname => $filename,
+        data   => $self->data,
+        schema => $self->schema,
+        access => $self->access,
+      );
+      open $fh, '<', $filename;
+      print STDOUT <$fh>;
+      close $fh;
+    }
+    else
+    {
+      say STDERR "@{[ ref $self->dbs ]} does not support dump";
+      $self->exit_value(2);
+    }
+    
+    $self;
+  }
+
 }
 
 package App::pza::main {

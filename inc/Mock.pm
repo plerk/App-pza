@@ -112,6 +112,12 @@ package Database::Server::Foo {
   {
     $init = 1;
   }
+  
+  sub dump ($self, $dbname, $filename, %args)
+  {
+    require YAML::XS;
+    YAML::XS::DumpFile($filename, { dbname => $dbname, args => \%args });
+  }
 
   sub env
   {
