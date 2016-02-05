@@ -252,28 +252,79 @@ package App::pza::dump {
   {
     $self->start_unless_up;
     
-    if($self->can('dump'))
-    {
-      my($fh, $filename) = tempfile('pzadumpXXXX', SUFFIX => '.sql', UNLINK => 1, TMPDIR => 1);
-      close $fh;
-      $self->dbs->dump($self->dbname => $filename,
-        data   => $self->data,
-        schema => $self->schema,
-        access => $self->access,
-      );
-      open $fh, '<', $filename;
-      print STDOUT <$fh>;
-      close $fh;
-    }
-    else
-    {
-      say STDERR "@{[ ref $self->dbs ]} does not support dump";
-      $self->exit_value(2);
-    }
+    my($fh, $filename) = tempfile('pzadumpXXXX', SUFFIX => '.sql', UNLINK => 1, TMPDIR => 1);
+    close $fh;
+    $self->dbs->dump($self->dbname => $filename,
+      data   => $self->data,
+      schema => $self->schema,
+      access => $self->access,
+    );
+    open $fh, '<', $filename;
+    print STDOUT while <$fh>;
+    close $fh;
     
     $self;
   }
 
+}
+
+package App::pza::diff {
+
+  use App::pza::oo;
+  extends 'App::pza';
+  
+  has data => (
+    is    => 'ro',
+    isa   => OptFlag,
+    short => 'd',
+  );
+  
+  has schema => (
+    is    => 'ro',
+    isa   => OptFlag,
+    short => 's',
+  );
+  
+  has access => (
+    is    => 'ro',
+    isa   => OptFlag,
+    short => 'a',
+  );
+  
+  has dbname_a => (
+    is      => 'ro',
+    isa     => 'Maybe[Str]',
+    lazy    => 1,
+    default => sub {
+      shift->args->[0],
+    },
+  );
+
+  has dbname_b => (
+    is      => 'ro',
+    isa     => 'Maybe[Str]',
+    lazy    => 1,
+    default => sub {
+      shift->args->[1],
+    },
+  );
+
+  sub run ($self)
+  {
+    $self->start_unless_up;
+    
+    my $text = $self->dbs->diff($self->dbname_a, $self->dbname_b,
+      data   => $self->data,
+      schema => $self->schema,
+      access => $self->access,
+    );
+    
+    $self->exit_value(1) unless $text eq '';
+    
+    print $text;
+    
+    $self;
+  }
 }
 
 package App::pza::main {
