@@ -93,7 +93,7 @@ package Database::Server::Foo {
     sort keys %db;
   }
   
-  sub shell
+  sub load
   {
     croak "todo";
   }
