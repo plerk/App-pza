@@ -7,12 +7,18 @@ package App::pza {
 
   # ABSTRACT: Command line for Database::Server
   use File::HomeDir ();
-  use Path::Class qw( file );
+  use Path::Class qw( dir file );
   use MooseX::Types::Path::Class qw( File Dir );
   use YAML::XS ();
   use Getopt::Long    qw( GetOptionsFromArray );
   use Pod::Usage      qw( pod2usage           );
   use App::pza::oo;
+
+  sub dot_pizza ($class)
+  {
+    state $dir;
+    $dir //= $ENV{PZA_HOME} ? dir( $ENV{PZA_HOME} ) : dir( File::HomeDir->my_home, '.pizza' );
+  }
 
   has dbs_class => (
     is       => 'ro',
@@ -26,7 +32,7 @@ package App::pza {
     lazy    => 1,
     coerce  => 1,
     default => sub ($self) {
-      my $file = file( File::HomeDir->my_home, '.pizza', 'etc', lc($self->dbs_class =~ s/^.*:://r).'.yml');
+      my $file = App::pza->dot_pizza->file( 'etc', lc($self->dbs_class =~ s/^.*:://r).'.yml');
       $file->parent->mkpath(0,0700) unless -d $file->parent;
       $file;
     },
@@ -369,7 +375,7 @@ package App::pza::main {
           $_->[0]->new(LoadFile($_->[1]));
         }
         grep { -f $_->[1] }
-        map { ["Database::Server::$_", file( File::HomeDir->my_home, qw( .pizza etc ), lc($_).'.yml' ) ] }
+        map { ["Database::Server::$_", App::pza->dot_pizza->file( 'etc', lc($_).'.yml' ) ] }
         uniq 
         sort 
         values %dbs;
@@ -395,7 +401,7 @@ package App::pza::main {
         }
         if($args[0] eq 'destroy')
         {
-          my $dir = dir( File::HomeDir->my_home, '.pizza' );
+          my $dir = App::pza->dot_pizza;
           say "removing $dir";
           $dir->rmtree(0,1);
         }
