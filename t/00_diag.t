@@ -13,13 +13,13 @@ $modules{$_} = $_ for qw(
   Capture::Tiny
   Database::Server
   ExtUtils::MakeMaker
-  File::HomeDir
   Import::Into
   List::MoreUtils
   Module::Load
   Moose
   MooseX::Types::Path::Class
   Path::Class
+  Test2::Plugin::FauxHomeDir
   Test::Exec
   Test::Exit
   Test::More

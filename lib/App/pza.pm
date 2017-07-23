@@ -6,7 +6,7 @@ use experimental qw( signatures postderef );
 package App::pza {
 
   # ABSTRACT: Command line for Database::Server
-  use File::HomeDir ();
+  use File::Glob qw( bsd_glob );
   use Path::Class qw( dir file );
   use MooseX::Types::Path::Class qw( File Dir );
   use YAML::XS ();
@@ -17,7 +17,7 @@ package App::pza {
   sub dot_pizza ($class)
   {
     state $dir;
-    $dir //= $ENV{PZA_HOME} ? dir( $ENV{PZA_HOME} ) : dir( File::HomeDir->my_home, '.pizza' );
+    $dir //= $ENV{PZA_HOME} ? dir( $ENV{PZA_HOME} ) : dir( bsd_glob '~/.pizza' );
   }
 
   has dbs_class => (
@@ -341,7 +341,6 @@ package App::pza::main {
   use List::MoreUtils qw( uniq                );
   use Path::Class     qw( file dir            );
   use YAML::XS        qw( LoadFile            );
-  use File::HomeDir;
 
   sub App::pza::main ($, @args)
   {

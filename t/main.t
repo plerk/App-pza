@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use 5.020;
-use File::HomeDir::Test;
+use Test2::Plugin::FauxHomeDir;
 use Test::More tests => 3;
 use Test::Exit;
 use Capture::Tiny qw( capture );
