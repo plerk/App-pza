@@ -14,7 +14,7 @@ $modules{$_} = $_ for qw(
   Database::Server
   ExtUtils::MakeMaker
   Import::Into
-  List::MoreUtils
+  List::Util
   Module::Load
   Moose
   MooseX::Types::Path::Class

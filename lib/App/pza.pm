@@ -338,7 +338,7 @@ package App::pza::main {
   use Getopt::Long    qw( GetOptionsFromArray );
   use Pod::Usage      qw( pod2usage           );
   use Module::Load    qw( load                );
-  use List::MoreUtils qw( uniq                );
+  use List::Util      qw( uniq                );
   use Path::Class     qw( file dir            );
   use YAML::XS        qw( LoadFile            );
 
